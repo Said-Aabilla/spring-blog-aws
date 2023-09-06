@@ -3,6 +3,7 @@ package com.javacraftsmanship.springcraftsmanship.service.impl;
 import com.javacraftsmanship.springcraftsmanship.dto.request.PostRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponseDto;
 import com.javacraftsmanship.springcraftsmanship.entity.Post;
+import com.javacraftsmanship.springcraftsmanship.exception.ResourceNotFoundException;
 import com.javacraftsmanship.springcraftsmanship.mapper.PostMapper;
 import com.javacraftsmanship.springcraftsmanship.repository.PostRepository;
 import com.javacraftsmanship.springcraftsmanship.service.PostService;
@@ -10,6 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -21,6 +24,20 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
+    public PostResponseDto getById(Long id) {
+        Post post =  postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+
+        return postMapper.toPostResponseDto(post);
+    }
+
+    @Override
+    public List<PostResponseDto> getAll() {
+        List<Post> posts = postRepository.findAll();
+        return postMapper.toPostResponseDtoList(posts);
+    }
+
+    @Override
     public PostResponseDto create(PostRequestDto postRequestDto) {
         log.info("Calling create method from PostServiceImpl to create a post");
         Post post = postMapper.toPost(postRequestDto);
@@ -30,7 +47,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponseDto update(PostRequestDto postRequestDto) {
-        return null;
+    public PostResponseDto update(PostRequestDto postRequestDto, Long id) {
+        Post post =  postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+        Post newPost  = postMapper.toPost(postRequestDto);
+
+        newPost.setId(post.getId());
+        postRepository.save(newPost);
+
+        return postMapper.toPostResponseDto(newPost);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Post post =  postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
+
+        postRepository.delete(post);
     }
 }

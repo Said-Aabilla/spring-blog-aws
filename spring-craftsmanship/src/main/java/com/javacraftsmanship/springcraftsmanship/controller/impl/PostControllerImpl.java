@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 
 
 @RestController
@@ -20,8 +21,29 @@ public class PostControllerImpl implements PostController {
     private final PostService postService;
 
     @Override
+    public List<PostResponseDto> getAll() {
+        return postService.getAll();
+    }
+
+    @Override
+    public ResponseEntity<PostResponseDto> getById(Long id) {
+        return ResponseEntity.ok(postService.getById(id));
+    }
+
+    @Override
     public ResponseEntity<PostResponseDto> create(PostRequestDto postRequestDto) {
         log.info("Calling create method from PostControllerImpl to create a post");
         return new ResponseEntity<>(postService.create(postRequestDto), HttpStatus.CREATED) ;
+    }
+
+    @Override
+    public ResponseEntity<PostResponseDto> update(PostRequestDto postRequestDto, Long id) {
+        return new ResponseEntity<>(postService.update(postRequestDto,id), HttpStatus.ACCEPTED) ;
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(Long id) {
+        postService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
