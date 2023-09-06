@@ -3,6 +3,7 @@ package com.javacraftsmanship.springcraftsmanship.controller.impl;
 import com.javacraftsmanship.springcraftsmanship.controller.PostController;
 import com.javacraftsmanship.springcraftsmanship.dto.request.PostRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponseDto;
+import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponsePaginatedDto;
 import com.javacraftsmanship.springcraftsmanship.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,8 @@ public class PostControllerImpl implements PostController {
     private final PostService postService;
 
     @Override
-    public List<PostResponseDto> getAll() {
-        return postService.getAll();
+    public PostResponsePaginatedDto getAll(int pageNo, int pageSize,String sortBy,String sortDir) {
+        return postService.getAll(pageNo,pageSize,sortBy,sortDir );
     }
 
     @Override

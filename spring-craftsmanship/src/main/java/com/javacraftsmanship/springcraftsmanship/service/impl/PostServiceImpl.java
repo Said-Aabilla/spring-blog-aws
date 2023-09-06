@@ -2,6 +2,7 @@ package com.javacraftsmanship.springcraftsmanship.service.impl;
 
 import com.javacraftsmanship.springcraftsmanship.dto.request.PostRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponseDto;
+import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponsePaginatedDto;
 import com.javacraftsmanship.springcraftsmanship.entity.Post;
 import com.javacraftsmanship.springcraftsmanship.exception.ResourceNotFoundException;
 import com.javacraftsmanship.springcraftsmanship.mapper.PostMapper;
@@ -10,7 +11,10 @@ import com.javacraftsmanship.springcraftsmanship.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -25,16 +29,20 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponseDto getById(Long id) {
-        Post post =  postRepository.findById(id)
+        Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
 
         return postMapper.toPostResponseDto(post);
     }
 
     @Override
-    public List<PostResponseDto> getAll() {
-        List<Post> posts = postRepository.findAll();
-        return postMapper.toPostResponseDtoList(posts);
+    public PostResponsePaginatedDto getAll(int pageNo, int pageSize, String sortBy, String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        PageRequest pageRequest = PageRequest.of(pageNo, pageSize, sort);
+        Page<Post> page = postRepository.findAll(pageRequest);
+
+        return postMapper.toPostResponsePaginatedDto(page);
     }
 
     @Override
@@ -43,14 +51,14 @@ public class PostServiceImpl implements PostService {
         Post post = postMapper.toPost(postRequestDto);
         postRepository.save(post);
         log.info("Post created!");
-        return postMapper.toPostResponseDto( post);
+        return postMapper.toPostResponseDto(post);
     }
 
     @Override
     public PostResponseDto update(PostRequestDto postRequestDto, Long id) {
-        Post post =  postRepository.findById(id)
+        Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
-        Post newPost  = postMapper.toPost(postRequestDto);
+        Post newPost = postMapper.toPost(postRequestDto);
 
         newPost.setId(post.getId());
         postRepository.save(newPost);
@@ -60,7 +68,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void delete(Long id) {
-        Post post =  postRepository.findById(id)
+        Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
 
         postRepository.delete(post);
