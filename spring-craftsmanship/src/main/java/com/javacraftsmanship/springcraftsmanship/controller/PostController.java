@@ -3,8 +3,12 @@ package com.javacraftsmanship.springcraftsmanship.controller;
 import com.javacraftsmanship.springcraftsmanship.dto.request.PostRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponseDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponsePaginatedDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+
 import static com.javacraftsmanship.springcraftsmanship.utils.ApiPaths.*;
 import static com.javacraftsmanship.springcraftsmanship.utils.AppConstants.*;
 
@@ -21,10 +25,10 @@ public interface PostController {
     ResponseEntity<PostResponseDto> getById(@PathVariable  Long id);
 
     @PostMapping
-    ResponseEntity<PostResponseDto> create(@RequestBody PostRequestDto postRequestDto);
+    ResponseEntity<PostResponseDto> create( @RequestBody @Valid PostRequestDto postRequestDto);
 
     @PutMapping("/{id}")
-    ResponseEntity<PostResponseDto> update(@RequestBody PostRequestDto postRequestDto, @PathVariable Long id);
+    ResponseEntity<PostResponseDto> update( @RequestBody @Valid PostRequestDto postRequestDto, @PathVariable Long id);
 
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(@PathVariable  Long id);
