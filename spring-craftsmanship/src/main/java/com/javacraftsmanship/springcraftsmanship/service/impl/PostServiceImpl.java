@@ -49,9 +49,8 @@ public class PostServiceImpl implements PostService {
     public PostResponseDto create(PostRequestDto postRequestDto) {
         log.info("Calling create method from PostServiceImpl to create a post");
         Post post = postMapper.toPost(postRequestDto);
-        postRepository.save(post);
         log.info("Post created!");
-        return postMapper.toPostResponseDto(post);
+        return postMapper.toPostResponseDto(postRepository.save(post));
     }
 
     @Override
@@ -61,16 +60,12 @@ public class PostServiceImpl implements PostService {
         Post newPost = postMapper.toPost(postRequestDto);
 
         newPost.setId(post.getId());
-        postRepository.save(newPost);
 
-        return postMapper.toPostResponseDto(newPost);
+        return postMapper.toPostResponseDto(postRepository.save(newPost));
     }
 
     @Override
     public void delete(Long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id.toString()));
-
-        postRepository.delete(post);
+        postRepository.deleteById(id);
     }
 }
