@@ -23,6 +23,9 @@ public class Post {
     private String content;
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 }
