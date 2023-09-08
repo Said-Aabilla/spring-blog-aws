@@ -1,17 +1,18 @@
 package com.javacraftsmanship.springcraftsmanship.config;
 
+import com.javacraftsmanship.springcraftsmanship.security.CustomUserDetailsService;
 import com.javacraftsmanship.springcraftsmanship.security.JwtAuthenticationEntryPoint;
 import com.javacraftsmanship.springcraftsmanship.security.JwtAuthenticationFilter;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import lombok.AllArgsConstructor;
+import com.javacraftsmanship.springcraftsmanship.utils.ApiPaths;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,52 +22,45 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static com.javacraftsmanship.springcraftsmanship.utils.ApiPaths.*;
 
 @Configuration
-@EnableMethodSecurity
-@SecurityScheme(
-        name = "Bear Authentication",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer"
-)
-@AllArgsConstructor
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-
+    @Autowired
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
 
-    private JwtAuthenticationFilter authenticationFilter;
-
+    @Autowired
+    private JwtAuthenticationFilter  jwtAuthenticationFilter;
 
     @Bean
-    public static PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests((authorize) -> authorize
+                        .requestMatchers(HttpMethod.GET, API+V1+ALL).permitAll()
+                        .requestMatchers(API+V1+AUTH+ALL).permitAll()
+                        .anyRequest()
+                        .authenticated()
+                );
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
+
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http.csrf().disable()
-                .authorizeHttpRequests((authorize) ->
-
-                        authorize.requestMatchers(HttpMethod.GET, API+V1+ALL).permitAll()
-                                .requestMatchers(HttpMethod.POST,API+V1+AUTH+ALL).permitAll()
-                                .requestMatchers("/swagger-ui/**").permitAll()
-                                .requestMatchers("/v3/api-docs/**").permitAll()
-                                .anyRequest().authenticated()
-
-                ).exceptionHandling( exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                ).sessionManagement( session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
-
-        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

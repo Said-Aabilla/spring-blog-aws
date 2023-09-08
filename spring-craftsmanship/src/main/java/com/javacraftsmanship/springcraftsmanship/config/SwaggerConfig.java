@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+
 @Configuration
 public class SwaggerConfig {
 
@@ -29,7 +30,7 @@ public class SwaggerConfig {
                 "Spring Boot Blog REST API Documentation",
                 "1",
                 "Terms of service",
-                new Contact("Said Aabilla", "https://github.com/Said-Aabilla", "said.aabilla@gmail.com"),
+                new Contact("Ramesh Fadatare", "www.javaguides.net", "ramesh@gmail.com"),
                 "License of API",
                 "API license URL",
                 Collections.emptyList()
