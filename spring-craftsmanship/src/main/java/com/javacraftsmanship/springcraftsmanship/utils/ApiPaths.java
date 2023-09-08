@@ -18,4 +18,5 @@ public final class ApiPaths {
 
     public static final String ID = "/{id}";
     public static final String POST_ID = "/{postId}";
+    public static final String ERROR = "/error";
 }
