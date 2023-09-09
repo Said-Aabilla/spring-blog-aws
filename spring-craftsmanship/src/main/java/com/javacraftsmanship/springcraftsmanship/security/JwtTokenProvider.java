@@ -2,18 +2,23 @@ package com.javacraftsmanship.springcraftsmanship.security;
 
 import com.javacraftsmanship.springcraftsmanship.exception.BlogAPIException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwt-secret}")
-    private String jwtSecret;
+    //@Value("${app.jwt-secret}")
+    //private String jwtSecret;
+
+    SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
     @Value("${app.jwt-expiration-milliseconds}")
     private int jwtExpirationInMs;
 
