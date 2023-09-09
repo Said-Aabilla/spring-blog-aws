@@ -1,5 +1,4 @@
 package com.javacraftsmanship.springcraftsmanship.dto.response;
-
 import lombok.Data;
 
 import java.util.List;
@@ -9,5 +8,6 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String description;
+    private CategoryResponseDto category;
     private List<CommentResponseDto> comments;
 }

@@ -2,6 +2,7 @@ package com.javacraftsmanship.springcraftsmanship.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -21,4 +22,8 @@ public class PostRequestDto {
     @NotBlank(message = "description should not be blank")
     @Size(min = 10,message ="description should have at least 10 characters")
     private String description;
+
+    @NotNull(message = "category id should not be null")
+    private Long categoryId;
+
 }

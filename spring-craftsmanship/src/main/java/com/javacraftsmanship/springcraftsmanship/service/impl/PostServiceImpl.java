@@ -3,9 +3,11 @@ package com.javacraftsmanship.springcraftsmanship.service.impl;
 import com.javacraftsmanship.springcraftsmanship.dto.request.PostRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponseDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponsePaginatedDto;
+import com.javacraftsmanship.springcraftsmanship.entity.Category;
 import com.javacraftsmanship.springcraftsmanship.entity.Post;
 import com.javacraftsmanship.springcraftsmanship.exception.ResourceNotFoundException;
 import com.javacraftsmanship.springcraftsmanship.mapper.PostMapper;
+import com.javacraftsmanship.springcraftsmanship.repository.CategoryRepository;
 import com.javacraftsmanship.springcraftsmanship.repository.PostRepository;
 import com.javacraftsmanship.springcraftsmanship.service.PostService;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
     private final PostRepository postRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public PostResponseDto getById(Long id) {
@@ -49,7 +52,11 @@ public class PostServiceImpl implements PostService {
     public PostResponseDto create(PostRequestDto postRequestDto) {
         log.info("Calling create method from PostServiceImpl to create a post");
         Post post = postMapper.toPost(postRequestDto);
-        log.info("Post created!");
+
+        Long categoryId = postRequestDto.getCategoryId();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId.toString()));
+        post.setCategory(category);
         return postMapper.toPostResponseDto(postRepository.save(post));
     }
 
@@ -60,6 +67,10 @@ public class PostServiceImpl implements PostService {
         Post newPost = postMapper.toPost(postRequestDto);
 
         newPost.setId(post.getId());
+        Long categoryId = postRequestDto.getCategoryId();
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId.toString()));
+        newPost.setCategory(category);
 
         return postMapper.toPostResponseDto(postRepository.save(newPost));
     }

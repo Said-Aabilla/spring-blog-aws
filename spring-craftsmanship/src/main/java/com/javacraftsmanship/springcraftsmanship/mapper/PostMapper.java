@@ -19,6 +19,7 @@ public class PostMapper {
 
 
     private final CommentMapper commentMapper;
+    private final CategoryMapper categoryMapper;
 
     public Post toPost(PostRequestDto postRequestDto){
         Post post = new Post();
@@ -34,6 +35,7 @@ public class PostMapper {
         postResponseDto.setTitle(post.getTitle());
         postResponseDto.setContent(post.getContent());
         postResponseDto.setDescription(post.getDescription());
+        postResponseDto.setCategory(categoryMapper.toCategoryResponseDto(post.getCategory()));
 
         List<CommentResponseDto> comments = commentMapper.toCommentResponseDtoList(post.getComments());
         postResponseDto.setComments(comments);
