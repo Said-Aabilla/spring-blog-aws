@@ -6,6 +6,7 @@ import com.javacraftsmanship.springcraftsmanship.dto.request.RegisterRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.JWTAuthResponseDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponseDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.PostResponsePaginatedDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,9 @@ import static com.javacraftsmanship.springcraftsmanship.utils.AppConstants.*;
 
 @RestController
 @RequestMapping(API + V1 + AUTH)
+@Tag(
+        name = "APIs for Authentication"
+)
 public interface AuthController {
     @PostMapping(value = {LOGIN, SIGN_IN})
      ResponseEntity<JWTAuthResponseDto> login(@RequestBody LoginRequestDto loginDto);

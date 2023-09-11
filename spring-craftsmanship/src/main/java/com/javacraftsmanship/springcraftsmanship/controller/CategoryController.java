@@ -2,6 +2,7 @@ package com.javacraftsmanship.springcraftsmanship.controller;
 
 import com.javacraftsmanship.springcraftsmanship.dto.request.CategoryRequestDto;
 import com.javacraftsmanship.springcraftsmanship.dto.response.CategoryResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

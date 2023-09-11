@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.javacraftsmanship.springcraftsmanship.utils.AppRoles.ROLE_USER;
+
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -64,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         List<Role> roles = new ArrayList<>();
-        Role userRole = roleRepository.findByName("ROLE_USER").get();
+        Role userRole = roleRepository.findByName(ROLE_USER).get();
         roles.add(userRole);
         user.setRoles(roles);
 
